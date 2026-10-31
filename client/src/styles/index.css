@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-orange: #FE8505;
+  --color-off-red: #E52E01;
+  --color-ivory: #FFFDE1;
+  --color-dark: #080c14;
+  --color-panel: #0e1526;
+}
+
+@layer base {
+  body {
+    @apply bg-[#080c14] text-[#FFFDE1] overflow-x-hidden antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-[#FFFDE1];
+  }
+}
+
+/* Custom Scrollbars in Orange/Off-Red theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0e1526;
+}
+::-webkit-scrollbar-thumb {
+  background: #3b1d11;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FE8505;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(14, 21, 38, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(254, 133, 5, 0.22);
+}
+
+.glass-panel-glow {
+  background: rgba(14, 21, 38, 0.9);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(254, 133, 5, 0.4);
+  box-shadow: 0 0 30px rgba(254, 133, 5, 0.12), 0 0 15px rgba(229, 46, 1, 0.08);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(254, 133, 5, 0.55);
+  box-shadow: 0 10px 30px -10px rgba(254, 133, 5, 0.25);
+}
+
+.command-gradient-border {
+  position: relative;
+  background: #0e1526;
+  border-radius: 0.75rem;
+}
+.command-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, rgba(254, 133, 5, 0.6), rgba(229, 46, 1, 0.3), transparent 70%);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Realistic Transit Photographic Overlays */
+.bg-transit-train {
+  background-image: 
+    linear-gradient(to bottom, rgba(8, 12, 20, 0.88), rgba(14, 21, 38, 0.94)),
+    url('https://images.unsplash.com/photo-1532105956626-9569c03602f6?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.bg-transit-bus {
+  background-image: 
+    linear-gradient(to bottom, rgba(8, 12, 20, 0.88), rgba(14, 21, 38, 0.94)),
+    url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.bg-transit-station {
+  background-image: 
+    linear-gradient(to bottom, rgba(8, 12, 20, 0.86), rgba(14, 21, 38, 0.95)),
+    url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Pulse Glows */
+@keyframes pulseGlowOrange {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlowOrange 2.5s infinite ease-in-out;
+}
+
+/* Leaflet Dark Custom Overrides */
+.leaflet-container {
+  background-color: #080c14 !important;
+  font-family: inherit !important;
+}
+.leaflet-popup-content-wrapper {
+  background: #0e1526 !important;
+  color: #FFFDE1 !important;
+  border: 1px solid rgba(254, 133, 5, 0.4) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  border-radius: 14px !important;
+}
+.leaflet-popup-tip {
+  background: #0e1526 !important;
+}

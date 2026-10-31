@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String            @id @default(uuid())
+  email        String            @unique
+  passwordHash String
+  name         String
+  phone        String?           @unique
+  role         String            @default("PASSENGER") // "PASSENGER", "ADMIN", "CONDUCTOR"
+  status       String            @default("ACTIVE")    // "ACTIVE", "SUSPENDED"
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  passengerProfile PassengerProfile?
+  adminProfile     AdminProfile?
+  conductorProfile ConductorProfile?
+  bookings         Booking[]
+  payments         Payment[]
+  tickets          Ticket[]
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  poolMemberships  PoolMember[]
+}
+
+model PassengerProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredLanguage String  @default("en")
+  emergencyContact String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AdminProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department  String   @default("Mobility Operations")
+  accessLevel String   @default("SUPER_ADMIN")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ConductorProfile {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId    String    @unique
+  badgeNumber   String
+  assignedBusId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  ticketScans   TicketScan[]
+}
+
+model Train {
+  id                 String          @id @default(uuid())
+  trainNumber        String          @unique
+  trainName          String
+  sourceStation      String
+  destinationStation String          @default("Mysuru Junction (MYS)")
+  scheduledArrival   String
+  estimatedArrival   String
+  delayMinutes       Int             @default(0)
+  platform           String          @default("1")
+  status             String          @default("ON_TIME") // "ON_TIME", "DELAYED", "ARRIVED", "CANCELLED"
+  provider           String          @default("SIMULATED") // "RAILRADAR", "SIMULATED"
+  isLive             Boolean         @default(false)
+  lastUpdated        DateTime        @default(now())
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  passengerPools     PassengerPool[]
+  bookings           Booking[]
+}
+
+model Destination {
+  id                     String          @id @default(uuid())
+  name                   String          @unique
+  slug                   String          @unique
+  address                String
+  latitude               Float
+  longitude              Float
+  category               String          @default("City Centre")
+  baseFare               Float           @default(35.0)
+  isActive               Boolean         @default(true)
+  estimatedTravelMinutes Int             @default(25)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+
+  routes                 Route[]
+  passengerPools         PassengerPool[]
+  bookings               Booking[]
+}
+
+model Route {
+  id                       String       @id @default(uuid())
+  routeNumber              String       @unique
+  routeName                String
+  originName               String       @default("Mysuru Junction Railway Station")
+  destinationId            String
+  destination              Destination  @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  totalDistanceKm          Float
+  estimatedDurationMinutes Int
+  isActive                 Boolean      @default(true)
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+
+  stops                    RouteStop[]
+  bookings                 Booking[]
+}
+
+model RouteStop {
+  id                            String   @id @default(uuid())
+  routeId                       String
+  route                         Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  stopName                      String
+  stopOrder                     Int
+  latitude                      Float
+  longitude                     Float
+  estimatedArrivalOffsetMinutes Int      @default(5)
+  createdAt                     DateTime @default(now())
+}
+
+model BoardingPoint {
+  id           String   @id @default(uuid())
+  name         String
+  stationName  String   @default("Mysuru Junction")
+  bayNumber    String   @default("Bay 3 (KSRTC City Connector)")
+  instructions String   @default("Exit Station Main Portico, proceed 50m left to KSRTC City Interchange Bay 3")
+  latitude     Float    @default(12.3164)
+  longitude    Float    @default(76.6433)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Vehicle {
+  id                 String           @id @default(uuid())
+  busNumber          String           @unique
+  registrationNumber String           @unique
+  vehicleType        String           @default("KSRTC Sarige / City Express")
+  capacity           Int              @default(56)
+  status             String           @default("AVAILABLE") // "AVAILABLE", "ASSIGNED", "IN_TRANSIT", "MAINTENANCE"
+  depot              String           @default("Mysuru Central Depot 1")
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  passengerPools     PassengerPool[]
+  dispatchRecords    DispatchRecord[]
+}
+
+model Driver {
+  id              String           @id @default(uuid())
+  name            String
+  licenseNumber   String           @unique
+  phone           String
+  status          String           @default("AVAILABLE") // "AVAILABLE", "ON_DUTY", "OFF_DUTY"
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  dispatchRecords DispatchRecord[]
+}
+
+model PassengerPool {
+  id                     String           @id @default(uuid())
+  poolCode               String           @unique
+  destinationId          String
+  destination            Destination      @relation(fields: [destinationId], references: [id])
+  trainId                String
+  train                  Train            @relation(fields: [trainId], references: [id])
+  journeyDate            String
+  status                 String           @default("FORMING") // "FORMING", "ELIGIBLE_FOR_REVIEW", "APPROVED", "REJECTED", "FULL", "DISPATCHED", "COMPLETED", "CANCELLED"
+  minCapacity            Int              @default(20)
+  maxCapacity            Int              @default(56)
+  currentPassengerCount  Int              @default(0)
+  targetBoardingWindow   String?
+  assignedVehicleId      String?
+  assignedVehicle        Vehicle?         @relation(fields: [assignedVehicleId], references: [id])
+  rejectionReason        String?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+
+  members                PoolMember[]
+  bookings               Booking[]
+  dispatchRecords        DispatchRecord[]
+}
+
+model PoolMember {
+  id             String        @id @default(uuid())
+  poolId         String
+  pool           PassengerPool @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  bookingId      String        @unique
+  booking        Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  passengerId    String
+  passenger      User          @relation(fields: [passengerId], references: [id])
+  passengerCount Int           @default(1)
+  joinedAt       DateTime      @default(now())
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  bookingCode    String        @unique
+  passengerId    String
+  passenger      User          @relation(fields: [passengerId], references: [id])
+  trainId        String
+  train          Train         @relation(fields: [trainId], references: [id])
+  destinationId  String
+  destination    Destination   @relation(fields: [destinationId], references: [id])
+  routeId        String?
+  route          Route?        @relation(fields: [routeId], references: [id])
+  poolId         String?
+  pool           PassengerPool? @relation(fields: [poolId], references: [id])
+  journeyDate    String
+  passengerCount Int           @default(1)
+  totalFare      Float
+  paymentStatus  String        @default("PENDING") // "PENDING", "PAID", "REFUNDED", "FAILED"
+  bookingStatus  String        @default("PENDING_POOL") // "PENDING_POOL", "POOL_CONFIRMED", "TICKET_ISSUED", "CANCELLED"
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  poolMembership PoolMember?
+  payments       Payment[]
+  tickets        Ticket[]
+}
+
+model Payment {
+  id                 String   @id @default(uuid())
+  paymentCode        String   @unique
+  bookingId          String
+  booking            Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  passengerId        String
+  passenger          User     @relation(fields: [passengerId], references: [id])
+  amount             Float
+  currency           String   @default("INR")
+  gateway            String   @default("RAZORPAY") // "RAZORPAY", "TEST_MOCK"
+  razorpayOrderId    String?
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  status             String   @default("CREATED") // "CREATED", "AUTHORIZED", "CAPTURED", "REFUNDED", "FAILED"
+  failureReason      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Ticket {
+  id                     String       @id @default(uuid())
+  ticketCode             String       @unique
+  sixDigitCode           String       @unique
+  bookingId              String
+  booking                Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  passengerId            String
+  passenger              User         @relation(fields: [passengerId], references: [id])
+  qrToken                String       @unique
+  qrCodeUrl              String?
+  status                 String       @default("ISSUED") // "ISSUED", "BOARDED", "EXPIRED", "CANCELLED"
+  issuedAt               DateTime     @default(now())
+  boardedAt              DateTime?
+  boardedVehicleId       String?
+  validatedByConductorId String?
+  expiresAt              DateTime
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
+
+  scans                  TicketScan[]
+}
+
+model TicketScan {
+  id          String            @id @default(uuid())
+  ticketId    String
+  ticket      Ticket            @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  conductorId String?
+  conductor   ConductorProfile? @relation(fields: [conductorId], references: [id])
+  scanMethod  String            @default("QR_SCAN") // "QR_SCAN", "MANUAL_CODE"
+  result      String            @default("SUCCESS") // "SUCCESS", "DUPLICATE", "INVALID", "EXPIRED"
+  notes       String?
+  scannedAt   DateTime          @default(now())
+}
+
+model DispatchRecord {
+  id                 String        @id @default(uuid())
+  dispatchCode       String        @unique
+  poolId             String
+  pool               PassengerPool @relation(fields: [poolId], references: [id])
+  vehicleId          String
+  vehicle            Vehicle       @relation(fields: [vehicleId], references: [id])
+  driverId           String?
+  driver             Driver?       @relation(fields: [driverId], references: [id])
+  scheduledDeparture String
+  actualDeparture    String?
+  departureBay       String        @default("Bay 3 (KSRTC City Connector)")
+  status             String        @default("SCHEDULED") // "SCHEDULED", "BOARDING", "DEPARTED", "COMPLETED", "CANCELLED"
+  approvedByAdminId  String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   @default("PASSENGER") // "PASSENGER", "ADMIN", "CONDUCTOR"
+  title     String
+  message   String
+  type      String   @default("INFO")      // "INFO", "SUCCESS", "WARNING", "ALERT"
+  isRead    Boolean  @default(false)
+  linkUrl   String?
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}

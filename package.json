@@ -1,0 +1,27 @@
+{
+  "name": "railbus-platform",
+  "version": "1.0.0",
+  "description": "Intelligent Railway-to-City Bus Synchronization & Passenger Pooling Platform",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build:client": "npm run build --prefix client",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "test": "npm run test --prefix server"
+  },
+  "keywords": [
+    "railbus",
+    "mysuru",
+    "passenger-pooling",
+    "ksrtc",
+    "railway-bus-synchronization",
+    "intelligent-mobility"
+  ],
+  "author": "RAILBUS Team",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
