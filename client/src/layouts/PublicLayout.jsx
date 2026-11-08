@@ -1,12 +1,16 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Train, Bus, ShieldCheck, Compass, ArrowRight, Activity, Flame, Radio, Info } from 'lucide-react';
+import Canvas3DBackground from '../components/3d/Canvas3DBackground';
 
 export default function PublicLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080c14] text-[#FFFDE1] font-sans antialiased">
+    <div className="min-h-screen flex flex-col bg-[#080c14] text-[#FFFDE1] font-sans antialiased relative">
+      {/* 3D Spatial Canvas Background */}
+      <Canvas3DBackground intensity="normal" />
+
       {/* Top Mobility Status Banner */}
       <div className="bg-gradient-to-r from-[#1c120c] via-[#080c14] to-[#1a0e0a] border-b border-[#3b1d11] px-4 py-1.5 text-xs">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -115,12 +119,12 @@ export default function PublicLayout() {
       </header>
 
       {/* Page Content */}
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#3b1d11] bg-[#06090f] py-10 text-xs text-[#FFFDE1]/70">
+      <footer className="border-t border-[#3b1d11] bg-[#06090f]/90 backdrop-blur-md py-10 text-xs text-[#FFFDE1]/70 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
             <div className="flex items-center space-x-2">

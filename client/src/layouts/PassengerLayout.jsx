@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { usePassengerAuth } from '../context/PassengerAuthContext';
 import NotificationCenter from '../components/NotificationCenter';
+import Canvas3DBackground from '../components/3d/Canvas3DBackground';
 
 export default function PassengerLayout() {
   const { passenger, logout } = usePassengerAuth();
@@ -26,7 +27,9 @@ export default function PassengerLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-[#FFFDE1] flex flex-col font-sans pb-20 md:pb-0 antialiased">
+    <div className="min-h-screen bg-[#080c14] text-[#FFFDE1] flex flex-col font-sans pb-20 md:pb-0 antialiased relative">
+      {/* 3D Spatial Canvas Background */}
+      <Canvas3DBackground intensity="subtle" />
       {/* Top Header */}
       <header className="sticky top-0 z-30 bg-[#0e1526]/95 backdrop-blur-md border-b border-[#3b1d11] px-4 py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">

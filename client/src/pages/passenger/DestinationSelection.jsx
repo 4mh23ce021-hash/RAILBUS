@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { MapPin, Clock, ArrowRight, Compass, CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
 import api from '../../services/api';
+import TiltCard3D from '../../components/3d/TiltCard3D';
 
 const stationIcon = L.divIcon({
   className: 'dest-station-marker',
@@ -132,45 +133,48 @@ export default function DestinationSelection() {
           {destinations.map((dest) => {
             const isSelected = selectedDest?.id === dest.id;
             return (
-              <div
-                key={dest.id}
-                onClick={() => setSelectedDest(dest)}
-                className={`p-5 rounded-3xl border transition-all cursor-pointer space-y-2.5 shadow-xl ${
-                  isSelected
-                    ? 'bg-[#162038] border-[#FE8505] shadow-lg shadow-[#FE8505]/15'
-                    : 'bg-[#0e1526] border-[#3b1d11] hover:border-[#FE8505]/50'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-bold text-[#FFFDE1] text-base">{dest.name}</h3>
-                    <p className="text-[11px] text-slate-400">{dest.category}</p>
-                  </div>
-                  <span className="font-mono text-base font-black text-emerald-400">
-                    ₹{dest.baseFare}
-                  </span>
-                </div>
+              <TiltCard3D key={dest.id} maxTilt={6} className="rounded-3xl">
+                <div
+                  onClick={() => setSelectedDest(dest)}
+                  className={`p-5 rounded-3xl border transition-all cursor-pointer space-y-2.5 shadow-xl h-full flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-[#162038] border-[#FE8505] shadow-lg shadow-[#FE8505]/20'
+                      : 'bg-[#0e1526]/90 border-[#3b1d11] hover:border-[#FE8505]/50'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-[#FFFDE1] text-base">{dest.name}</h3>
+                        <p className="text-[11px] text-slate-400">{dest.category}</p>
+                      </div>
+                      <span className="font-mono text-base font-black text-emerald-400">
+                        ₹{dest.baseFare}
+                      </span>
+                    </div>
 
-                <p className="text-xs text-[#FFFDE1]/80 line-clamp-1">{dest.address}</p>
-
-                <div className="pt-2 border-t border-[#3b1d11] flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-1.5 text-slate-400">
-                    <Clock className="w-3.5 h-3.5 text-[#FE8505]" />
-                    <span>~{dest.estimatedTravelMinutes} mins transit</span>
+                    <p className="text-xs text-[#FFFDE1]/80 line-clamp-1">{dest.address}</p>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProceed(dest);
-                    }}
-                    className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#FE8505] to-[#E52E01] text-[#080c14] hover:text-white font-extrabold text-xs flex items-center space-x-1.5 transition-all shadow-md"
-                  >
-                    <span>Proceed</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
+                  <div className="pt-2 border-t border-[#3b1d11] flex items-center justify-between text-xs">
+                    <div className="flex items-center space-x-1.5 text-slate-400">
+                      <Clock className="w-3.5 h-3.5 text-[#FE8505]" />
+                      <span>~{dest.estimatedTravelMinutes} mins transit</span>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProceed(dest);
+                      }}
+                      className="px-4 py-1.5 rounded-xl btn-3d-orange text-xs flex items-center space-x-1.5"
+                    >
+                      <span>Proceed</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </TiltCard3D>
             );
           })}
         </div>

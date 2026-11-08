@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAdminAuth } from '../context/AdminAuthContext';
 import { useSocket } from '../context/SocketContext';
+import Canvas3DBackground from '../components/3d/Canvas3DBackground';
 
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth();
@@ -237,8 +238,11 @@ export default function AdminLayout() {
         </header>
 
         {/* Dynamic Route Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-[#080c14]">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto p-6 bg-[#080c14] relative">
+          <Canvas3DBackground intensity="subtle" />
+          <div className="relative z-10">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

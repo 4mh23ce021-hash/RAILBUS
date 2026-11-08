@@ -111,6 +111,119 @@
   animation: pulseGlowOrange 2.5s infinite ease-in-out;
 }
 
+/* ========================================================
+   3D SPATIAL TRANSFORM & PERSPECTIVE UTILITIES
+   ======================================================== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.perspective-2000 {
+  perspective: 2000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* 3D Depth Layers */
+.translate-z-10 {
+  transform: translateZ(10px);
+}
+.translate-z-20 {
+  transform: translateZ(20px);
+}
+.translate-z-30 {
+  transform: translateZ(30px);
+}
+.translate-z-50 {
+  transform: translateZ(50px);
+}
+
+/* 3D Keyframe Animations */
+@keyframes spinSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes spinReverse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+  }
+}
+@keyframes scanline {
+  0% {
+    top: 0%;
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    top: 100%;
+    opacity: 0.2;
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
+.animate-spin-reverse {
+  animation: spinReverse 9s linear infinite;
+}
+.animate-float-3d {
+  animation: float3d 6s ease-in-out infinite;
+}
+.animate-scanline {
+  animation: scanline 2.8s ease-in-out infinite;
+}
+
+/* Tactile 3D Extruded Buttons */
+.btn-3d-orange {
+  position: relative;
+  background: linear-gradient(135deg, #FE8505 0%, #E52E01 100%);
+  color: #080c14;
+  font-weight: 900;
+  box-shadow: 0 4px 0 #b82400, 0 10px 25px rgba(254, 133, 5, 0.4);
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.btn-3d-orange:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #b82400, 0 14px 30px rgba(254, 133, 5, 0.5);
+  color: #FFFDE1;
+}
+.btn-3d-orange:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b82400, 0 4px 12px rgba(254, 133, 5, 0.3);
+}
+
+.btn-3d-glass {
+  position: relative;
+  background: rgba(22, 32, 56, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(254, 133, 5, 0.4);
+  color: #FFFDE1;
+  box-shadow: 0 4px 0 #080c14, 0 8px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+}
+.btn-3d-glass:hover {
+  transform: translateY(-2px);
+  border-color: #FE8505;
+  color: #FE8505;
+  box-shadow: 0 6px 0 #080c14, 0 12px 25px rgba(254, 133, 5, 0.2);
+}
+.btn-3d-glass:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #080c14, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
 /* Leaflet Dark Custom Overrides */
 .leaflet-container {
   background-color: #080c14 !important;

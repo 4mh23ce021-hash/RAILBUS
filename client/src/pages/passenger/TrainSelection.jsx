@@ -14,6 +14,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import api from '../../services/api';
+import HologramLoader3D from '../../components/3d/HologramLoader3D';
+import TiltCard3D from '../../components/3d/TiltCard3D';
 
 export default function TrainSelection() {
   const [trains, setTrains] = useState([]);
@@ -239,20 +241,18 @@ export default function TrainSelection() {
           {/* Train Cards List */}
           <div className="space-y-3">
             {loading ? (
-              <div className="text-center py-12 text-[#FFFDE1]/60 text-sm">
-                Fetching train schedules and live delay telemetry...
-              </div>
+              <HologramLoader3D message="SCANNING MYSURU JUNCTION TIMETABLE" />
             ) : filteredTrains.length === 0 ? (
               <div className="text-center py-12 text-slate-400 text-sm bg-[#0e1526] rounded-2xl border border-[#3b1d11]">
                 No matching trains found for "{search}".
               </div>
             ) : (
               filteredTrains.map((train) => (
-                <div
-                  key={train.id}
-                  onClick={() => handleSelectTrain(train)}
-                  className="p-5 rounded-3xl bg-[#0e1526] border border-[#3b1d11] hover:border-[#FE8505] hover:bg-[#162038] transition-all cursor-pointer group space-y-3 shadow-xl"
-                >
+                <TiltCard3D key={train.id} maxTilt={6} className="rounded-3xl">
+                  <div
+                    onClick={() => handleSelectTrain(train)}
+                    className="p-5 rounded-3xl bg-[#0e1526]/90 border border-[#3b1d11] hover:border-[#FE8505] hover:bg-[#162038] transition-all cursor-pointer group space-y-3 shadow-xl"
+                  >
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center space-x-2">
@@ -308,7 +308,8 @@ export default function TrainSelection() {
                     </span>
                   </div>
                 </div>
-              ))
+              </TiltCard3D>
+            ))
             )}
           </div>
         </>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { QrCode, KeyRound, Users, History, Bus, LogOut, ShieldCheck } from 'lucide-react';
 import { useConductorAuth } from '../context/ConductorAuthContext';
+import Canvas3DBackground from '../components/3d/Canvas3DBackground';
 
 export default function ConductorLayout() {
   const { conductor, logout } = useConductorAuth();
@@ -13,7 +14,8 @@ export default function ConductorLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col font-sans pb-16 md:pb-0">
+    <div className="min-h-screen bg-[#080c14] text-slate-100 flex flex-col font-sans pb-16 md:pb-0 relative">
+      <Canvas3DBackground intensity="subtle" />
       {/* Top Header */}
       <header className="bg-[#0e1526] border-b border-slate-800 px-4 py-3 sticky top-0 z-30 shadow-md">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -45,7 +47,7 @@ export default function ConductorLayout() {
       </header>
 
       {/* Main Workspace */}
-      <main className="flex-1 max-w-2xl w-full mx-auto p-4">
+      <main className="flex-1 max-w-2xl w-full mx-auto p-4 relative z-10">
         <Outlet />
       </main>
 

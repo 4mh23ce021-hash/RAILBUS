@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import { useSocket } from '../../context/SocketContext';
 import api from '../../services/api';
+import HologramLoader3D from '../../components/3d/HologramLoader3D';
+import TiltCard3D from '../../components/3d/TiltCard3D';
 
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
@@ -55,11 +57,7 @@ export default function AdminDashboard() {
   }, [realtimeEvents]);
 
   if (loading) {
-    return (
-      <div className="py-20 text-center text-[#FFFDE1]/60 text-sm">
-        Polling real-time mobility telemetry from database and interchange nodes...
-      </div>
-    );
+    return <HologramLoader3D message="POLLING REAL-TIME TELEMETRY FROM MYSURU NODES" />;
   }
 
   const m = data?.metrics || {};

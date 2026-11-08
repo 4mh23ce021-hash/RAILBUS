@@ -22,6 +22,8 @@ import {
 import confetti from 'canvas-confetti';
 import { useSocket } from '../../context/SocketContext';
 import api from '../../services/api';
+import Ticket3DPass from '../../components/3d/Ticket3DPass';
+import HologramLoader3D from '../../components/3d/HologramLoader3D';
 
 export default function TicketPage() {
   const { id } = useParams();
@@ -90,11 +92,7 @@ export default function TicketPage() {
   };
 
   if (loading) {
-    return (
-      <div className="py-16 text-center text-[#FFFDE1]/60 text-sm">
-        Rendering secure KSRTC digital boarding pass...
-      </div>
-    );
+    return <HologramLoader3D message="RENDERING 3D HOLOGRAPHIC BOARDING PASS" />;
   }
 
   if (error || !ticket) {
@@ -141,8 +139,9 @@ export default function TicketPage() {
         </div>
       )}
 
-      {/* Ticket Card with Brand Colors */}
-      <div className="bg-[#0e1526] rounded-3xl border border-[#FE8505]/40 overflow-hidden shadow-2xl relative">
+      {/* 3D Holographic Boarding Pass Container */}
+      <Ticket3DPass status={ticket.status}>
+        <div className="bg-[#0e1526]/95 rounded-3xl border border-[#FE8505]/40 overflow-hidden shadow-2xl relative">
         {/* Ticket Header */}
         <div className="bg-gradient-to-r from-[#1c120c] via-[#0e1526] to-[#1a111a] p-5 border-b border-[#3b1d11] flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
@@ -275,12 +274,13 @@ export default function TicketPage() {
           )}
         </div>
       </div>
+      </Ticket3DPass>
 
       {/* Action Links */}
       <div className="flex items-center space-x-3">
         <Link
           to="/passenger/live-tracking"
-          className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#FE8505] to-[#E52E01] text-[#080c14] hover:text-white text-xs font-black text-center transition-all shadow-lg flex items-center justify-center space-x-2"
+          className="flex-1 py-3 rounded-2xl btn-3d-orange text-xs text-center flex items-center justify-center space-x-2"
         >
           <Radio className="w-4 h-4" />
           <span>Track Feeder Bus Live</span>
